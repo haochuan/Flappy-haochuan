@@ -12,22 +12,23 @@ var main_state = {
 		// Function called first to load all the assets
 
 		// Background 
-		this.game.stage.backgroundColor = '#71c5cf';
+		game.stage.backgroundColor = '#71c5cf';
 
 		// Haochuan
-        this.game.load.spritesheet('haochuan', 'assets/haochuan.png',  50, 50, 4);
+        game.load.spritesheet('haochuan', 'assets/haochuan.png',  50, 50, 4);
 
 		// Pipes
-		this.game.load.image('pipe', 'assets/pipe.png')
+		game.load.image('pipe', 'assets/pipe.png');
 
         // sound
-        this.game.load.audio('jump', 'assets/jump.wav');
-        this.game.load.audio('die', 'assets/die.wav');
+        game.load.audio('jump', 'assets/jump.wav');
+        game.load.audio('die', 'assets/die.wav');
 
 
     },
 
     create: function() { 
+        game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // touch event on ios
 
@@ -43,6 +44,7 @@ var main_state = {
     	this.haochuan = this.game.add.sprite(30, height / 2 - 50, 'haochuan', 0);
 
     	// Gravity
+        game.physics.arcade.enable(this.haochuan); // 
     	this.haochuan.body.gravity.y = 1200;
 
         // timer
@@ -56,6 +58,7 @@ var main_state = {
 
     	// Pipe
     	this.pipes = game.add.group();
+        this.pipes.enableBody = true;
     	this.pipes.createMultiple(width / 20, 'pipe');
 		
         // scores
@@ -96,7 +99,7 @@ var main_state = {
     //jump
     jump: function() {  
         // Add a vertical velocity to haochuan
-            if (this.haochuan.alive == false)  
+            if (this.haochuan.alive === false)  
         return; 
         this.haochuan.loadTexture('haochuan', 2);
         this.jump_sound.play();  
@@ -108,7 +111,7 @@ var main_state = {
         
         // jump animation
 
-        if(this.space_key.isUp) {
+        if(!this.space_key.isDown) {
             this.haochuan.loadTexture('haochuan', 0);
         }
 
@@ -125,7 +128,7 @@ var main_state = {
         }
 
 		// haochuan is out of the world
-		if(this.haochuan.inWorld == false) {
+		if(this.haochuan.inWorld === false) {
             this.hit_pipe();
 		}
 
@@ -142,7 +145,7 @@ var main_state = {
             }
         }
 
-        this.game.physics.overlap(this.haochuan, this.pipes, this.hit_pipe, null, this);
+        game.physics.arcade.overlap(this.haochuan, this.pipes, this.hit_pipe, null, this);
     },
     // game_win: function() {
     //     this.haochuan.win = true;
